@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import styled, { createGlobalStyle } from 'styled-components';
 import { FaTrophy, FaUserTie, FaLeaf } from 'react-icons/fa';
+import { proxyImage } from '../utils/imageProxy';
 
 // Global styles to ensure full-screen effect
 const GlobalStyle = createGlobalStyle`
@@ -38,7 +39,7 @@ const HeroSection = styled.section`
   height: 10vh;
   min-height: 80px;
   width: 100%;
-  background: transparent;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -327,16 +328,7 @@ const CarouselImage = styled.div`
   filter: brightness(${props => props.active ? 1 : 0.8});
   z-index: 1;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(11, 18, 32, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%);
-    z-index: 2;
-  }
+
 `;
 
 const CarouselContent = styled.div`
@@ -602,7 +594,7 @@ const AdventureSection = styled.section`
   color: white;
   padding: 6rem 0;
   overflow: hidden;
-  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  background: url('${proxyImage("https://www.qantas.com/content/travelinsider/en/travel-tips/how-to-see-the-northern-lights/jcr:content/parsysTop/hero.img.full.medium.jpg/1587980552111.jpg")}') center/cover;
   
   &::before {
     content: '';
@@ -611,15 +603,14 @@ const AdventureSection = styled.section`
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('https://www.qantas.com/content/travelinsider/en/travel-tips/how-to-see-the-northern-lights/jcr:content/parsysTop/hero.img.full.medium.jpg/1587980552111.jpg') center/cover;
-    opacity: 0.2;
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.3) 0%, rgba(59, 130, 246, 0.2) 100%);
     z-index: 1;
   }
 `;
 
 const AdventureContent = styled.div`
   position: relative;
-  z-index: 2;
+  z-index: 3;
   text-align: center;
   max-width: 900px;
   margin: 0 auto;
@@ -670,7 +661,7 @@ const ExperienceBackground = styled.div`
   position: relative;
   min-height: 100vh;
   width: 100%;
-  background: url('https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?q=80&w=2070&auto=format&fit=crop');
+  background: url('${proxyImage("https://static.euronews.com/articles/stories/06/30/96/92/1200x675_cmsv2_12641906-5d98-51ac-98ea-596c4817d4d8-6309692.jpg")}');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -678,17 +669,6 @@ const ExperienceBackground = styled.div`
   align-items: center;
   justify-content: center;
   padding: 4rem 0;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(11, 18, 32, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%);
-    z-index: 1;
-  }
   
   @media (max-width: 768px) {
     padding: 2rem 0;
@@ -833,7 +813,6 @@ const HeroImageOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(11, 18, 32, 0.6) 0%, rgba(15, 23, 42, 0.4) 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -868,7 +847,7 @@ const HeroImageSubtitle = styled.p`
 `;
 
 const TitleWrap = styled.div`
-  background: url('https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+  background: url('${proxyImage("https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?q=80&w=2070&auto=format&fit=crop")}') center/cover no-repeat;
   border-radius: 14px;
   padding: 40px 20px;
   margin-bottom: 30px;
@@ -886,10 +865,10 @@ const ImageCarousel = () => {
   const [isPaused, setIsPaused] = useState(false);
   const carouselRef = React.useRef(null);
 
-  // Define image categories using local images from uploads folder
+  // Define image categories using proxied external images
   const northernLightsImages = [
     {
-      src: "https://s.yimg.com/ny/api/res/1.2/C_6PxwYiMbVf9vUw6ZqZRg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyNDI7aD04MTQ7Y2Y9d2VicA--/https://s.yimg.com/os/creatr-uploaded-images/2025-08/1e7c55d0-739d-11f0-b66f-ffc10fa4c7b6",
+      src: proxyImage("https://s.yimg.com/ny/api/res/1.2/C_6PxwYiMbVf9vUw6ZqZRg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyNDI7aD04MTQ7Y2Y9d2VicA--/https://s.yimg.com/os/creatr-uploaded-images/2025-08/1e7c55d0-739d-11f0-b66f-ffc10fa4c7b6"),
       title: t('carousel.auroraBorealis.title'),
       description: t('carousel.auroraBorealis.description'),
       category: t('carousel.categories.northernLights'),
@@ -898,13 +877,13 @@ const ImageCarousel = () => {
 
   const arcticWildlifeImages = [
     {
-      src: "https://images.squarespace-cdn.com/content/v1/6455d3d82007782c081fad44/1691866239045-5VECRU9TF1ZV9YHIU6S8/image-asset.jpeg",
+      src: proxyImage("https://images.squarespace-cdn.com/content/v1/6455d3d82007782c081fad44/1691866239045-5VECRU9TF1ZV9YHIU6S8/image-asset.jpeg"),
       title: t('carousel.polarBear.title'),
       description: t('carousel.polarBear.description'),
       category: t('carousel.categories.wildlife'),
     },
     {
-      src: "https://www.bornfree.org.uk/wp-content/uploads/2023/11/hans-jurgen-mager-CHqbiMhQ_wE-unsplash-scaled.jpg",
+      src: proxyImage("https://www.bornfree.org.uk/wp-content/uploads/2023/11/hans-jurgen-mager-CHqbiMhQ_wE-unsplash-scaled.jpg"),
       title: t('carousel.polarBearExpedition.title'),
       description: t('carousel.polarBearExpedition.description'),
       category: t('carousel.categories.wildlife'),
@@ -913,19 +892,19 @@ const ImageCarousel = () => {
 
   const fjordImages = [
     {
-      src: "https://v.imgi.no/3f2f8lqzxt",
+      src: proxyImage("https://v.imgi.no/3f2f8lqzxt"),
       title: t('carousel.majesticFjords.title'),
       description: t('carousel.majesticFjords.description'),
       category: t('carousel.categories.fjords'),
     },
     {
-      src: "https://www.hollandamerica.com/blog/wp-content/uploads/2023/08/norway-fjords.webp",
+      src: proxyImage("https://www.hollandamerica.com/blog/wp-content/uploads/2023/08/norway-fjords.webp"),
       title: t('carousel.fjordCruise.title'),
       description: t('carousel.fjordCruise.description'),
       category: t('carousel.categories.fjords'),
     },
     {
-      src: "https://www.lifeinnorway.net/wp-content/uploads/2024/04/norway-fjord-cruise-with-pink-sky-768x432.jpg",
+      src: proxyImage("https://www.lifeinnorway.net/wp-content/uploads/2024/04/norway-fjord-cruise-with-pink-sky-768x432.jpg"),
       title: t('carousel.scenicFjords.title'),
       description: t('carousel.scenicFjords.description'),
       category: t('carousel.categories.fjords'),
@@ -1067,15 +1046,10 @@ const HomePage = () => {
     <div style={{ overflow: 'hidden' }}>
       <GlobalStyle />
       <ImageCarousel />
-      <div style={{ height: '1rem', background: '#0f172a' }}></div>
       <HeroSection className="hero-section">
         <HeroContent>
         </HeroContent>
       </HeroSection>
-      
-      <div style={{ height: '1rem' }}></div>
-
-      <div style={{ height: '1rem' }}></div>
       <ExperienceSection>
         <ExperienceBackground>
           <ExperienceContent>
@@ -1084,7 +1058,7 @@ const HomePage = () => {
               {t('home.experiences.description')}
             </ExperienceDescription>
             <HeroImageContainer>
-              <HeroImage src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop" alt="Northern Lights over Norwegian Arctic landscape" />
+              <HeroImage src={proxyImage("https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop")} alt="Northern Lights over Norwegian Arctic landscape" />
               <HeroImageOverlay>
                 <HeroImageTitle>{t('home.hero.title')}</HeroImageTitle>
                 <HeroImageSubtitle>{t('home.hero.subtitle')}</HeroImageSubtitle>
@@ -1092,7 +1066,7 @@ const HomePage = () => {
             </HeroImageContainer>
             <ExperienceGrid>
               <ExperienceCard>
-                <ExperienceImage src="/uploads/Northern Light.jpg" alt="Northern Lights" />
+                <ExperienceImage src={proxyImage("https://www.muchbetteradventures.com/magazine/content/images/2023/12/GettyImages-538653565--1-.jpg")} alt="Northern Lights" />
                 <ExperienceCardTitle>{t('home.experiences.northernLights.title')}</ExperienceCardTitle>
                 <ExperienceCardText>
                   {t('home.experiences.northernLights.description')}
@@ -1100,7 +1074,7 @@ const HomePage = () => {
               </ExperienceCard>
               
               <ExperienceCard>
-                <ExperienceImage src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop" alt="Arctic Fjords" />
+                <ExperienceImage src={proxyImage("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop")} alt="Arctic Fjords" />
                 <ExperienceCardTitle>{t('home.experiences.fjords.title')}</ExperienceCardTitle>
                 <ExperienceCardText>
                   {t('home.experiences.fjords.description')}
@@ -1108,7 +1082,7 @@ const HomePage = () => {
               </ExperienceCard>
               
               <ExperienceCard>
-                <ExperienceImage src="/uploads/Polar Bear.jpg" alt="Arctic Wildlife" />
+                <ExperienceImage src={proxyImage("https://cdn.kimkim.com/files/a/content_articles/featured_photos/814e020d96b50cc940cd713abaf3e15724abb989/big-55bb56566dd4fac09e0f1927e9196e7f.jpg")} alt="Arctic Wildlife" />
                 <ExperienceCardTitle>{t('home.experiences.wildlife.title')}</ExperienceCardTitle>
                 <ExperienceCardText>
                   {t('home.experiences.wildlife.description')}
@@ -1119,7 +1093,6 @@ const HomePage = () => {
         </ExperienceBackground>
       </ExperienceSection>
 
-      <div style={{ height: '1rem' }}></div>
       <Section>
         <TitleWrap>
           <SectionTitle>{t('home.why.title')}</SectionTitle>
@@ -1157,9 +1130,6 @@ const HomePage = () => {
         </FeaturesGrid>
       </Section>
 
-      <div style={{ height: '1rem' }}></div>
-
-      <div style={{ height: '1rem' }}></div>
       <AdventureSection>
         <AdventureContent>
           <AdventureTitle>{t('home.adventure.title')}</AdventureTitle>

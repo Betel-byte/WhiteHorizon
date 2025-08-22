@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp } from 'react-icons/fa';
+import { proxyImage } from '../utils/imageProxy';
 
 const Page = styled.div`
   position: relative;
   min-height: 100vh;
   padding: 3rem 1rem 4rem;
   background: linear-gradient(135deg, rgba(2,6,23,0.8) 0%, rgba(2,6,23,0.6) 100%),
-              url('/uploads/northern-lights-in-norway.jpg');
+              url('${proxyImage("https://www.muchbetteradventures.com/magazine/content/images/2023/12/GettyImages-538653565--1-.jpg")}');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

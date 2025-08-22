@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { proxyImage } from '../utils/imageProxy';
 
 const AdminContainer = styled.div`
   max-width: 1200px;
@@ -13,7 +14,7 @@ const AdminContainer = styled.div`
 const AdminPage = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, rgba(2,6,23,0.6), rgba(2,6,23,0.6)),
-              url('https://airpano.ru/files/360video/video-northern-lights-norway/images/image4.jpg') center/cover fixed no-repeat;
+              url('${proxyImage("https://airpano.ru/files/360video/video-northern-lights-norway/images/image4.jpg")}') center/cover fixed no-repeat;
 `;
 
 const AdminHeader = styled.div`
@@ -540,7 +541,7 @@ const AdminDashboard = () => {
             type="text"
             value={formData.image}
             onChange={(e) => setFormData({...formData, image: e.target.value})}
-            placeholder="/uploads/your-image.jpg"
+            placeholder="https://example.com/your-image.jpg"
           />
         </FormGroup>
 

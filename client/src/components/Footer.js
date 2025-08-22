@@ -4,10 +4,24 @@ import { useTranslation } from 'react-i18next';
 import { FaInstagram, FaFacebookF, FaTwitter, FaYoutube } from 'react-icons/fa';
 
 const FooterContainer = styled.footer`
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: url('https://images.euronews.com/image/v2/-1x-1/1431x804.jpg?w=1024&h=576&fit=crop&q=80');
+  background-size: cover;
+  background-position: center;
   color: #ffffff;
   padding: 60px 0 20px;
   margin-top: auto;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.5) 0%, rgba(22, 33, 62, 0.4) 100%);
+    z-index: 1;
+  }
 `;
 
 const FooterContent = styled.div`
@@ -17,6 +31,8 @@ const FooterContent = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 40px;
+  position: relative;
+  z-index: 2;
 `;
 
 const FooterSection = styled.div`
@@ -68,6 +84,8 @@ const Copyright = styled.div`
   border-top: 1px solid #333;
   color: #b0b0b0;
   font-size: 0.9rem;
+  position: relative;
+  z-index: 2;
 `;
 
 const Footer = () => {

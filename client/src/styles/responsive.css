@@ -156,8 +156,7 @@ html {
 @media screen and (max-width: 768px) {
   nav {
     padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: transparent;
     transition: all var(--transition-normal);
   }
   
@@ -833,15 +832,7 @@ section {
     left: -280px;
     width: 280px;
     height: 100vh;
-    background: linear-gradient(135deg, 
-                rgba(26, 26, 46, 0.9) 0%, 
-                rgba(67, 97, 238, 0.7) 50%, 
-                rgba(102, 126, 234, 0.8) 100%),
-                url('https://images.unsplash.com/photo-1483347756197-71ef80e95f73?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    backdrop-filter: blur(15px);
+    background: #1a1a2e;
     flex-direction: column;
     justify-content: flex-start;
     padding-top: 70px;

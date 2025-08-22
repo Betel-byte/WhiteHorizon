@@ -1,0 +1,9 @@
+/* This is a fixed version of responsive.css that uses local images */
+@import url('./responsive.css');
+
+/* Override the problematic background image - removed background image */
+.mobile-menu, [class*="NavLinks"], nav, header {
+  background: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+}

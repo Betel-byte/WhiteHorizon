@@ -14,7 +14,8 @@ import AdminContactPage from './pages/AdminContactPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import Footer from './components/Footer';
 import './styles/App.css';
-import './styles/responsive.css';
+import './styles/responsive-fixed.css';
+import './styles/proxied-images.css';
 
 function App() {
   const isAdminAuthenticated = () => {

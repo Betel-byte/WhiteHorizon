@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { proxyImage } from '../utils/imageProxy';
 
 const JournalContainer = styled.div`
   max-width: 1200px;
@@ -14,7 +15,7 @@ const PageBackdrop = styled.div`
   position: fixed;
   inset: 0;
   background: linear-gradient(135deg, rgba(2,6,23,0.7), rgba(2,6,23,0.6)),
-              url('https://image-tc.galaxy.tf/wijpeg-7kw8jk41fn17ayr9yzj70x49l/file.jpg') center/cover no-repeat;
+              url('${proxyImage("https://image-tc.galaxy.tf/wijpeg-7kw8jk41fn17ayr9yzj70x49l/file.jpg")}') center/cover no-repeat;
   z-index: -1;
   filter: brightness(1) saturate(1.2);
   background-attachment: fixed;
@@ -101,7 +102,7 @@ const CategoryTitle = styled.h3`
   margin: 0 0 12px 0;
   padding: 16px 18px;
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)),
-              url('/uploads/northern-lights-qantas.jpg');
+              url('${proxyImage("https://www.qantas.com/content/travelinsider/en/travel-tips/how-to-see-the-northern-lights/jcr:content/parsysTop/hero.img.full.medium.jpg/1587980552111.jpg")}');
   background-size: cover;
   background-position: center;
   border-radius: 14px;
@@ -330,7 +331,7 @@ const SafetyTitle = styled.h2`
   z-index: 2;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)),
-              url('/uploads/northern-lights-qantas.jpg');
+              url('${proxyImage("https://www.qantas.com/content/travelinsider/en/travel-tips/how-to-see-the-northern-lights/jcr:content/parsysTop/hero.img.full.medium.jpg/1587980552111.jpg")}');
   background-size: cover;
   background-position: center;
   padding: 15px 30px;
@@ -562,7 +563,7 @@ const JournalPage = () => {
 
       <FeaturedArticle>
         <FeaturedImage style={{
-          backgroundImage: 'url(https://a.storyblok.com/f/53624/1600x2400/bb5eb6451b/snl_northernlights_tromso_1600x2400.jpg/m/700x1100)',
+          backgroundImage: `url(${proxyImage("https://a.storyblok.com/f/53624/1600x2400/bb5eb6451b/snl_northernlights_tromso_1600x2400.jpg/m/700x1100")})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           position: 'relative'

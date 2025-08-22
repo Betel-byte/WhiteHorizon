@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, Navigate } from 'react-router-dom';
+import { proxyImage } from '../utils/imageProxy';
 
 const Page = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, rgba(2,6,23,0.6), rgba(2,6,23,0.6)),
-              url('https://airpano.ru/files/360video/video-northern-lights-norway/images/image4.jpg') center/cover fixed no-repeat;
+              url('${proxyImage("https://airpano.ru/files/360video/video-northern-lights-norway/images/image4.jpg")}') center/cover fixed no-repeat;
   padding: 60px 0 40px;
 `;
 

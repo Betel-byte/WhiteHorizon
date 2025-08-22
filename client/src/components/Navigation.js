@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import LanguageSwitcher from './LanguageSwitcher';
+import { proxyImage } from '../utils/imageProxy';
 
 const Nav = styled.nav`
   background: transparent;
@@ -13,7 +14,6 @@ const Nav = styled.nav`
   left: 0;
   right: 0;
   z-index: 1000;
-  backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 `;
 
@@ -48,15 +48,7 @@ const NavLinks = styled.div`
     left: ${props => props.isOpen ? '0' : '-280px'};
     width: 280px;
     height: 100vh;
-    background: linear-gradient(135deg, 
-                rgba(26, 26, 46, 0.5) 0%, 
-                rgba(67, 97, 238, 0.3) 50%, 
-                rgba(102, 126, 234, 0.4) 100%),
-                url('https://images.unsplash.com/photo-1483347756197-71ef80e95f73?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    backdrop-filter: blur(15px);
+    background: #1a1a2e;
     flex-direction: column;
     justify-content: flex-start;
     padding-top: 20px;
@@ -78,7 +70,8 @@ const NavLinks = styled.div`
       background: rgba(255, 255, 255, 0.3);
       border-radius: 2px;
     }
-  }`;
+  }
+`;
 
 const NavLink = styled(Link)`
   color: white;
@@ -187,7 +180,7 @@ const Navigation = () => {
         <NavContainer>
           <Logo to="/">White Horizon Expedition</Logo>
           
-          <NavLinks isOpen={isMobileMenuOpen}>
+          <NavLinks isOpen={isMobileMenuOpen} className="mobile-menu">
           <NavLink to="/" onClick={closeMobileMenu}>
             {t('nav.home')}
           </NavLink>

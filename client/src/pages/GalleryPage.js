@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { FaSearch, FaTimes } from 'react-icons/fa';
+import { proxyImage } from '../utils/imageProxy';
 
 const PageBackdrop = styled.div`
   position: fixed;
@@ -10,7 +11,7 @@ const PageBackdrop = styled.div`
   right: 0;
   bottom: 0;
   background: linear-gradient(135deg, rgba(2,6,23,0.85), rgba(2,6,23,0.65)),
-              url('/uploads/northern-lights-in-norway.jpg') center/cover no-repeat;
+              url('${proxyImage("https://www.muchbetteradventures.com/magazine/content/images/2019/07/12102929/iStock-992710110.jpg")}') center/cover no-repeat;
   z-index: -1;
   filter: saturate(1.1) brightness(0.9);
   background-attachment: fixed;

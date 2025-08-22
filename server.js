@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
@@ -18,7 +19,9 @@ const emailPass = process.env.EMAIL_PASS || 'demo-password';
 const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(cors({
   origin: frontendUrl,
   credentials: true
@@ -27,36 +30,40 @@ app.use(compression());
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// API endpoint to get all images from uploads folder and external URLs
+// Image proxy endpoint to handle CORS issues
+app.get('/api/image-proxy', async (req, res) => {
+  const imageUrl = req.query.url;
+  if (!imageUrl) {
+    return res.status(400).send('Image URL is required');
+  }
+  
+  try {
+    const response = await axios({
+      method: 'get',
+      url: imageUrl,
+      responseType: 'arraybuffer'
+    });
+    
+    const contentType = response.headers['content-type'];
+    res.setHeader('Content-Type', contentType);
+    res.send(response.data);
+  } catch (error) {
+    console.error('Error proxying image:', error.message);
+    res.status(500).send('Error fetching image');
+  }
+});
+
+// API endpoint to get all images from external URLs only
 app.get('/api/gallery-images', (req, res) => {
   try {
-    const uploadsDir = path.join(__dirname, 'uploads');
-    const files = fs.readdirSync(uploadsDir);
-    
-    // Filter out non-image files, directories, and class diagram
-    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif'];
-    const imageFiles = files.filter(file => {
-      const filePath = path.join(uploadsDir, file);
-      const isFile = fs.statSync(filePath).isFile();
-      const ext = path.extname(file).toLowerCase();
-      const lowerFileName = file.toLowerCase();
-      
-      // Exclude class diagram or any diagram-like images
-      // This includes files that might contain 'class', 'diagram', 'uml', etc.
-      const isClassDiagram = lowerFileName.includes('class') || 
-                            lowerFileName.includes('diagram') || 
-                            lowerFileName.includes('uml') || 
-                            lowerFileName.includes('model') || 
-                            file === '3b54978e7c42b341a25eb7b95665bb64'; // This file might be a diagram without extension
-      
-      return isFile && (imageExtensions.includes(ext) || !ext) && !isClassDiagram;
-    });
+    // Function to convert external URLs to proxied URLs
+    const proxyUrl = (url) => `/api/image-proxy?url=${encodeURIComponent(url)}`;
     
     // External image URLs provided by the user
     const externalImageUrls = [
       // Polar Bears (Wildlife)
       {
-        url: 'https://www.bornfree.org.uk/wp-content/uploads/2023/11/Polar-bears-c-hans-jurgen-mager-unsplash-HERO-1.jpg',
+        url: 'https://www.nhm.ac.uk/content/dam/nhmwww/discover/polar-bears-arctic/polar-bear-cubs-mother-full-width.jpg.thumb.1160.1160.jpg',
         category: 'wildlife',
         title: 'Polar Bears',
         location: 'Svalbard, Norway'
@@ -321,74 +328,139 @@ app.get('/api/gallery-images', (req, res) => {
       }
     ];
     
-    // Map image files to gallery items
-    const categories = ['wildlife', 'landscapes', 'aurora', 'expeditions', 'icebergs'];
-    const galleryImages = imageFiles.map((file, index) => {
-      // Determine category based on filename
-      let category = 'landscapes'; // Default category
-      
-      const lowerFileName = file.toLowerCase();
-      if (lowerFileName.includes('light') || lowerFileName.includes('aurora') || lowerFileName.includes('borealis')) {
-        category = 'aurora';
-      } else if (lowerFileName.includes('bear') || lowerFileName.includes('fox') || lowerFileName.includes('animal') || 
-                lowerFileName.includes('wildlife') || lowerFileName.includes('moose') || lowerFileName.includes('alces')) {
-        category = 'wildlife';
-      } else if (lowerFileName.includes('expedition') || lowerFileName.includes('trek') || lowerFileName.includes('hiking') || 
-                lowerFileName.includes('tour') || lowerFileName.includes('minibus') || lowerFileName.includes('camping')) {
-        category = 'expeditions';
-      } else if (lowerFileName.includes('ice') || lowerFileName.includes('iceberg') || lowerFileName.includes('glacier')) {
-        category = 'icebergs';
-      } else if (lowerFileName.includes('fjord') || lowerFileName.includes('mountain') || 
-                lowerFileName.includes('landscape') || lowerFileName.includes('norway')) {
-        category = 'landscapes';
-      } else {
-        // If no specific category is detected, assign a random one
-        category = categories[Math.floor(Math.random() * categories.length)];
-      }
-      
-      // Generate a title and location based on the filename
-      const fileNameWithoutExt = path.basename(file, path.extname(file));
-      const title = fileNameWithoutExt
-        .replace(/-/g, ' ')
-        .replace(/\d+$/, '') // Remove trailing numbers
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')
-        .trim();
-      
-      // Default locations based on category
-      const locations = {
-        'aurora': ['Tromsø, Norway', 'Northern Norway', 'Arctic Circle', 'Lofoten, Norway', 'Finnmark, Norway', 'Svalbard, Norway'],
-        'wildlife': ['Svalbard, Norway', 'Arctic Norway', 'Northern Norway', 'Norwegian Wildlife Reserve'],
-        'landscapes': ['Western Norway', 'Sognefjord, Norway', 'Norwegian Fjords', 'Norwegian Highlands', 'Jotunheimen National Park'],
-        'expeditions': ['Senja Island, Norway', 'Lofoten Islands', 'Arctic Circle', 'Northern Norway'],
-        'icebergs': ['Arctic Waters', 'Svalbard', 'Norwegian Arctic', 'Greenland Sea']
-      };
-      
-      const location = locations[category][Math.floor(Math.random() * locations[category].length)];
-      
-      return {
-        id: index + 1,
-        src: `/uploads/${file}`,
-        title: title || 'Norwegian Landscape',
-        location: location,
-        category: category
-      };
-    });
-    
-    // Add external images to the gallery
+    // Create gallery images from external URLs only
     const externalImages = externalImageUrls.map((image, index) => {
       return {
-        id: galleryImages.length + index + 1,
-        src: image.url,
+        id: index + 1,
+        src: proxyUrl(image.url),
         title: image.title,
         location: image.location,
         category: image.category
       };
     });
     
-    // Combine local and external images
-    const allImages = [...galleryImages, ...externalImages];
+    // Add more external images to replace local ones
+    const additionalExternalImages = [
+      // Landscapes
+      {
+        id: externalImages.length + 1,
+        src: proxyUrl('https://www.fjordtours.com/media/1541/fjord-tours-norway-in-a-nutshell-classic-sognefjord-flam-valley-summer.jpg'),
+        title: 'Norwegian Fjords',
+        location: 'Sognefjord, Norway',
+        category: 'landscapes'
+      },
+      {
+        id: externalImages.length + 2,
+        src: proxyUrl('https://www.muchbetteradventures.com/magazine/content/images/2022/10/Shutterstock_1563149851.jpg'),
+        title: 'Lofoten Islands',
+        location: 'Lofoten, Norway',
+        category: 'landscapes'
+      },
+      {
+        id: externalImages.length + 3,
+        src: proxyUrl('https://www.fjordtravel.no/wp-content/uploads/2018/10/geiranger-fjord-norway-1024x683.jpg'),
+        title: 'Geiranger Fjord',
+        location: 'Western Norway',
+        category: 'landscapes'
+      },
+      {
+        id: externalImages.length + 4,
+        src: proxyUrl('https://www.visitnorway.com/dbimgs/preikestolen-fjord-cruise-pulpit-rock-norway-fjords.jpg'),
+        title: 'Pulpit Rock',
+        location: 'Lysefjord, Norway',
+        category: 'landscapes'
+      },
+      // Expeditions
+      {
+        id: externalImages.length + 5,
+        src: proxyUrl('https://www.hurtigruten.com/globalassets/photos/destinations/svalbard/inspirational/svalbard_zodiac_cruise_passenger_photo_dominic-barrington.jpg'),
+        title: 'Zodiac Expedition',
+        location: 'Svalbard, Norway',
+        category: 'expeditions'
+      },
+      {
+        id: externalImages.length + 6,
+        src: proxyUrl('https://www.hurtigruten.com/globalassets/photos/destinations/svalbard/ships/ms-spitsbergen/svalbard_ms-spitsbergen_photo_andrea-klaussner.jpg'),
+        title: 'Arctic Expedition Ship',
+        location: 'Arctic Norway',
+        category: 'expeditions'
+      },
+      {
+        id: externalImages.length + 7,
+        src: proxyUrl('https://www.hurtigruten.com/globalassets/photos/destinations/svalbard/excursions/svalbard_hiking_photo_genna-roland.jpg'),
+        title: 'Arctic Hiking',
+        location: 'Svalbard, Norway',
+        category: 'expeditions'
+      },
+      {
+        id: externalImages.length + 8,
+        src: proxyUrl('https://www.hurtigruten.com/globalassets/photos/destinations/svalbard/excursions/svalbard_dog-sledding_photo_agurtxane-concellon.jpg'),
+        title: 'Dog Sledding',
+        location: 'Arctic Norway',
+        category: 'expeditions'
+      },
+      // Additional Landscapes
+      {
+        id: externalImages.length + 9,
+        src: proxyUrl('https://www.fjordtours.com/media/1541/fjord-tours-norway-in-a-nutshell-classic-sognefjord-flam-valley-summer.jpg'),
+        title: 'Norwegian Fjords',
+        location: 'Sognefjord, Norway',
+        category: 'landscapes'
+      },
+      {
+        id: externalImages.length + 10,
+        src: proxyUrl('https://www.muchbetteradventures.com/magazine/content/images/2022/10/Shutterstock_1563149851.jpg'),
+        title: 'Lofoten Islands',
+        location: 'Lofoten, Norway',
+        category: 'landscapes'
+      },
+      {
+        id: externalImages.length + 11,
+        src: proxyUrl('https://www.fjordtravel.no/wp-content/uploads/2018/10/geiranger-fjord-norway-1024x683.jpg'),
+        title: 'Geiranger Fjord',
+        location: 'Western Norway',
+        category: 'landscapes'
+      },
+      {
+        id: externalImages.length + 12,
+        src: proxyUrl('https://www.visitnorway.com/dbimgs/preikestolen-fjord-cruise-pulpit-rock-norway-fjords.jpg'),
+        title: 'Pulpit Rock',
+        location: 'Lysefjord, Norway',
+        category: 'landscapes'
+      },
+      // Additional Expeditions
+      {
+        id: externalImages.length + 13,
+        src: proxyUrl('https://www.hurtigruten.com/globalassets/photos/destinations/svalbard/inspirational/svalbard_zodiac_cruise_passenger_photo_dominic-barrington.jpg'),
+        title: 'Zodiac Expedition',
+        location: 'Svalbard, Norway',
+        category: 'expeditions'
+      },
+      {
+        id: externalImages.length + 14,
+        src: proxyUrl('https://www.hurtigruten.com/globalassets/photos/destinations/svalbard/ships/ms-spitsbergen/svalbard_ms-spitsbergen_photo_andrea-klaussner.jpg'),
+        title: 'Arctic Expedition Ship',
+        location: 'Arctic Norway',
+        category: 'expeditions'
+      },
+      {
+        id: externalImages.length + 15,
+        src: proxyUrl('https://www.hurtigruten.com/globalassets/photos/destinations/svalbard/excursions/svalbard_hiking_photo_genna-roland.jpg'),
+        title: 'Arctic Hiking',
+        location: 'Svalbard, Norway',
+        category: 'expeditions'
+      },
+      {
+        id: externalImages.length + 8,
+        src: 'https://www.hurtigruten.com/globalassets/photos/destinations/svalbard/excursions/svalbard_dog-sledding_photo_agurtxane-concellon.jpg',
+        title: 'Dog Sledding',
+        location: 'Arctic Norway',
+        category: 'expeditions'
+      }
+    ];
+    
+    // Combine all external images
+    const allImages = [...externalImages, ...additionalExternalImages];
     
     res.json(allImages);
   } catch (error) {
@@ -472,7 +544,7 @@ let articles = [
       de: "Lernen Sie die besten Techniken, um das magische Nordlicht einzufangen...",
       ar: "تعلم أفضل التقنيات لالتقاط الشفق الشمالي الساحر..."
     },
-    image: "/uploads/northern-lights-guide.jpg",
+    image: "https://www.wanderingowl.com/wp-content/uploads/2020/04/blog_images_photo_northern_lights_norway.jpg",
     category: "photography",
     tags: ["northern-lights", "photography", "tips"],
     author: "Arctic Expert",
@@ -1120,14 +1192,12 @@ app.delete('/api/admin/uploads/:filename', adminAuth, (req, res) => {
   }
 });
 
-// Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client/build')));
-  
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-  });
-}
+// Serve static files in both production and development
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

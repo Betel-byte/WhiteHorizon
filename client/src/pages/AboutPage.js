@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FaBus, FaCar, FaUsers, FaStar } from 'react-icons/fa';
+import { proxyImage } from '../utils/imageProxy';
 
 const AboutContainer = styled.div`
   max-width: 1200px;
@@ -9,7 +10,7 @@ const AboutContainer = styled.div`
   padding: 120px 20px 60px;
   color: #333;
   line-height: 1.8;
-  background: url('https://image-tc.galaxy.tf/wijpeg-7kw8jk41fn17ayr9yzj70x49l/file.jpg');
+  background: url('${proxyImage("https://image-tc.galaxy.tf/wijpeg-7kw8jk41fn17ayr9yzj70x49l/file.jpg")}');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -81,7 +82,7 @@ const SectionTitle = styled.h2`
 
 const TitleWrap = styled.div`
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)),
-              url('/uploads/northern-lights-qantas.jpg');
+              url('${proxyImage("https://www.qantas.com/content/travelinsider/en/travel-tips/how-to-see-the-northern-lights/jcr:content/parsysTop/hero.img.full.medium.jpg/1587980552111.jpg")}');
   background-size: cover;
   background-position: center;
   border-radius: 14px;
@@ -224,7 +225,7 @@ const MemberBio = styled.p`
 const ValuesSection = styled.section`
   margin: 60px 0;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 249, 250, 0.8)),
-              url('/uploads/tips-lg-fjord-norway.webp') center/cover no-repeat;
+              url('${proxyImage("https://www.fjordtours.com/media/1541/fjord-tours-norway-in-a-nutshell-classic-sognefjord-flam-valley-summer.jpg")}') center/cover no-repeat;
   padding: 40px 20px;
   border-radius: 15px;
   position: relative;
@@ -242,7 +243,7 @@ const ValuesGrid = styled.div`
 const TourOptionsSection = styled.section`
   margin: 60px 0;
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(51, 65, 85, 0.85) 100%),
-              url('/uploads/norway-campervan-blue-fjord-mountains-thumb.jpg') center/cover no-repeat;
+              url('${proxyImage("https://www.muchbetteradventures.com/magazine/content/images/2022/10/Shutterstock_1563149851.jpg")}') center/cover no-repeat;
   padding: 60px 20px;
   border-radius: 15px;
   color: white;
